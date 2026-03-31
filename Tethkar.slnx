@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Tethkar.API/Tethkar.API.csproj" />
+  <Project Path="Tethkar.Data/Tethkar.Data.csproj" />
+  <Project Path="Tethkar.Services/Tethkar.Services.csproj" />
+</Solution>
