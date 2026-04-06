@@ -2,5 +2,5 @@
 internal class ConnectionString
 {
     //public const string TestString = "Data Source=208.64.33.115;Initial Catalog=MoviesDb;User Id=sa;Password=P@ssw0rd@123;TrustServerCertificate=True"
-    public const string TestString = "Server=.;Database=TethkarDb;Trusted_Connection=True;TrustServerCertificate=True;";
+    public const string TestString = "Server=.\\SQLEXPRESS;Database=TethkarDb;Trusted_Connection=True;TrustServerCertificate=True;";
 }

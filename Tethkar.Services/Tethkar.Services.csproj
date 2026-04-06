@@ -16,9 +16,4 @@
     <ProjectReference Include="..\Tethkar.Data\Tethkar.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="IService\" />
-    <Folder Include="Service\" />
-  </ItemGroup>
-
 </Project>

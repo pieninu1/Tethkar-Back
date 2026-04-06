@@ -1,12 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿namespace Tethkar.Data.Models;
 
-namespace Tethkar.Data.Models
+public class Category
 {
-    public class Category
-    {
-        public int CategoryId { get; set; }
-        public string CategoryName { get; set; } = string.Empty;
+    public long Id { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-        public ICollection<EventCategory> EventCategories { get; set; } = new List<EventCategory>();
-    }
+    //public ICollection<EventCategory> EventCategories { get; set; } = new List<EventCategory>();
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Tethkar.Data.Data;
+using Tethkar.Data.DTOs;
 using Tethkar.Data.Models;
 
 namespace Tethkar.API.Extensions;
@@ -11,17 +12,25 @@ public static class ApiConfiguration
 {
     public static IServiceCollection AddApiLayer(this IServiceCollection services, IConfiguration configuration)
     {
-        #region Configure Authentication
+        #region Configure JWT Settings
         services.Configure<JWT>(configuration.GetSection("JWT"));
-
-        services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
         #endregion
 
+        #region Configure Identity
+        services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+        #endregion
+
+        #region Add Controllers + OpenAPI
         services.AddControllers();
         services.AddOpenApi();
+        #endregion
+
+        #region Configure CORS
         services.AddCors(options =>
         {
-            options.AddPolicy("API", builder =>
+            options.AddPolicy("TethkarAPI", builder =>
             {
                 builder
                     .AllowAnyOrigin()
@@ -29,29 +38,35 @@ public static class ApiConfiguration
                     .AllowAnyHeader();
             });
         });
+        #endregion
 
-        #region This section to enable project to use auth by jwt (Bearer jwtToken) 
+        #region Configure JWT Authentication
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         })
-            .AddJwtBearer(o =>
+        .AddJwtBearer(o =>
+        {
+            o.RequireHttpsMetadata = false;
+            o.SaveToken = false;
+
+            // This makes sure the JWT key exists in appsettings.json before using it
+            var jwtKey = configuration["JWT:Key"]
+                ?? throw new InvalidOperationException("JWT:Key is missing from appsettings.json");
+
+            o.TokenValidationParameters = new TokenValidationParameters
             {
-                o.RequireHttpsMetadata = false;
-                o.SaveToken = false;
-                o.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidIssuer = configuration["JWT:Issuer"],
-                    ValidAudience = configuration["JWT:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"])),
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidIssuer = configuration["JWT:Issuer"],
+                ValidAudience = configuration["JWT:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+                ClockSkew = TimeSpan.Zero
+            };
+        });
         #endregion
 
         return services;

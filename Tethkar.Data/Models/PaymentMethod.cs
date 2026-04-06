@@ -2,7 +2,7 @@
 {
     public class PaymentMethod
     {
-        public int PaymentMethodId { get; set; }
+        public long Id { get; set; }
         public string MethodName { get; set; } = string.Empty;
         public bool IsActive { get; set; }
 
