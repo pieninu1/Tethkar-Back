@@ -13,7 +13,7 @@ public class EventService(AppDbContext context) : IEventService
     {
         return await _context.Events
             .Include(e => e.City)
-            .Include(e => e.TicketTypes)
+            .Include(e => e.CategoryId)
             .ToListAsync();
     }
 
@@ -21,8 +21,7 @@ public class EventService(AppDbContext context) : IEventService
     {
         return await _context.Events
             .Include(e => e.City)
-            .Include(e => e.TicketTypes)
-            .Include(e => e.EventCategories)
+            .Include(e => e.CategoryId)
             .AsSplitQuery()
             .SingleOrDefaultAsync(e => e.Id == id);
     }

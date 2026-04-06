@@ -44,40 +44,40 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options) : Iden
             .Property(p => p.Amount)
             .HasColumnType("decimal(18,2)");
 
-        builder.Entity<Ticket>()
-            .HasOne(t => t.OrderItem)
-            .WithMany(oi => oi.Tickets)
-            .HasForeignKey(t => t.OrderItemId)
-            .OnDelete(DeleteBehavior.NoAction);
+        //builder.Entity<Ticket>()
+        //    .HasOne(t => t.OrderItem)
+        //    .WithMany(oi => oi.Tickets)
+        //    .HasForeignKey(t => t.OrderItemId)
+        //    .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<Ticket>()
-            .HasOne(t => t.TicketType)
-            .WithMany(tt => tt.Tickets)
-            .HasForeignKey(t => t.TicketTypeId)
-            .OnDelete(DeleteBehavior.NoAction);
+    //    builder.Entity<Ticket>()
+    //        .HasOne(t => t.TicketType)
+    //        .WithMany(tt => tt.Tickets)
+    //        .HasForeignKey(t => t.TicketTypeId)
+    //        .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<Ticket>()
-            .HasOne(t => t.Buyer)
-            .WithMany()
-            .HasForeignKey(t => t.BuyerUserId)
-            .OnDelete(DeleteBehavior.NoAction);
+    //    builder.Entity<Ticket>()
+    //        .HasOne(t => t.Buyer)
+    //        .WithMany()
+    //        .HasForeignKey(t => t.BuyerUserId)
+    //        .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<Order>()
-            .HasOne(o => o.Buyer)
-            .WithMany()
-            .HasForeignKey(o => o.BuyerUserId)
-            .OnDelete(DeleteBehavior.NoAction);
+    //    builder.Entity<Order>()
+    //        .HasOne(o => o.Buyer)
+    //        .WithMany()
+    //        .HasForeignKey(o => o.BuyerUserId)
+    //        .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<Event>()
-            .HasOne(e => e.City)
-            .WithMany(c => c.Events)
-            .HasForeignKey(e => e.CityId)
-            .OnDelete(DeleteBehavior.NoAction);
+    //    builder.Entity<Event>()
+    //        .HasOne(e => e.City)
+    //        .WithMany(c => c.Events)
+    //        .HasForeignKey(e => e.CityId)
+    //        .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Entity<Event>()
-            .HasOne(e => e.Organizer)
-            .WithMany()
-            .HasForeignKey(e => e.OrganizerId)
-            .OnDelete(DeleteBehavior.NoAction);
+    //    builder.Entity<Event>()
+    //        .HasOne(e => e.Organizer)
+    //        .WithMany()
+    //        .HasForeignKey(e => e.OrganizerId)
+    //        .OnDelete(DeleteBehavior.NoAction);
     }
 }

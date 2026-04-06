@@ -5,10 +5,9 @@ namespace Tethkar.Data.Data;
 
 public partial class AppDbContext
 {
-     public DbSet<City> Cities { get; set; }
-     public DbSet<Category> Categories { get; set; }
-     public DbSet<Event> Events { get; set; }
-    public DbSet<EventCategory> EventCategories { get; set; }
+    public DbSet<City> Cities { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Event> Events { get; set; }
     public DbSet<TicketType> TicketTypes { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tethkar.Data.Data;
 
@@ -11,9 +12,11 @@ using Tethkar.Data.Data;
 namespace Tethkar.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260406081255_EditPaymentTable")]
+    partial class EditPaymentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -314,6 +317,29 @@ namespace Tethkar.Data.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("Tethkar.Data.Models.EventCategory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("EventId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("EventCategories");
+                });
+
             modelBuilder.Entity("Tethkar.Data.Models.Order", b =>
                 {
                     b.Property<long>("Id")
@@ -322,22 +348,26 @@ namespace Tethkar.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("BuyerId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("BuyerUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BuyerUserId");
+                    b.HasIndex("BuyerId");
 
                     b.ToTable("Orders");
                 });
@@ -356,7 +386,7 @@ namespace Tethkar.Data.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<long>("TicketId")
+                    b.Property<long>("TicketTypeId")
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("UnitPrice")
@@ -366,7 +396,7 @@ namespace Tethkar.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("TicketId");
+                    b.HasIndex("TicketTypeId");
 
                     b.ToTable("OrderItems");
                 });
@@ -435,6 +465,9 @@ namespace Tethkar.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<long?>("OrderItemId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("PurchasedAt")
                         .HasColumnType("datetime2");
 
@@ -447,6 +480,8 @@ namespace Tethkar.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BuyerUserId");
+
+                    b.HasIndex("OrderItemId");
 
                     b.HasIndex("TicketTypeId");
 
@@ -596,13 +631,30 @@ namespace Tethkar.Data.Migrations
                     b.Navigation("Organizer");
                 });
 
+            modelBuilder.Entity("Tethkar.Data.Models.EventCategory", b =>
+                {
+                    b.HasOne("Tethkar.Data.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tethkar.Data.Models.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("Tethkar.Data.Models.Order", b =>
                 {
                     b.HasOne("Tethkar.Data.Models.ApplicationUser", "Buyer")
                         .WithMany()
-                        .HasForeignKey("BuyerUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BuyerId");
 
                     b.Navigation("Buyer");
                 });
@@ -615,15 +667,15 @@ namespace Tethkar.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Tethkar.Data.Models.Ticket", "Ticket")
+                    b.HasOne("Tethkar.Data.Models.TicketType", "TicketType")
                         .WithMany()
-                        .HasForeignKey("TicketId")
+                        .HasForeignKey("TicketTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");
 
-                    b.Navigation("Ticket");
+                    b.Navigation("TicketType");
                 });
 
             modelBuilder.Entity("Tethkar.Data.Models.Payment", b =>
@@ -652,6 +704,10 @@ namespace Tethkar.Data.Migrations
                         .HasForeignKey("BuyerUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Tethkar.Data.Models.OrderItem", null)
+                        .WithMany("Tickets")
+                        .HasForeignKey("OrderItemId");
 
                     b.HasOne("Tethkar.Data.Models.TicketType", "TicketType")
                         .WithMany()
@@ -685,6 +741,11 @@ namespace Tethkar.Data.Migrations
                     b.Navigation("OrderItems");
 
                     b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("Tethkar.Data.Models.OrderItem", b =>
+                {
+                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("Tethkar.Data.Models.PaymentMethod", b =>

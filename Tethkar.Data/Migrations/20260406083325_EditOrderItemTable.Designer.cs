@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tethkar.Data.Data;
 
@@ -11,9 +12,11 @@ using Tethkar.Data.Data;
 namespace Tethkar.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260406083325_EditOrderItemTable")]
+    partial class EditOrderItemTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -314,6 +317,29 @@ namespace Tethkar.Data.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("Tethkar.Data.Models.EventCategory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("EventId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("EventCategories");
+                });
+
             modelBuilder.Entity("Tethkar.Data.Models.Order", b =>
                 {
                     b.Property<long>("Id")
@@ -594,6 +620,25 @@ namespace Tethkar.Data.Migrations
                     b.Navigation("City");
 
                     b.Navigation("Organizer");
+                });
+
+            modelBuilder.Entity("Tethkar.Data.Models.EventCategory", b =>
+                {
+                    b.HasOne("Tethkar.Data.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tethkar.Data.Models.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("Tethkar.Data.Models.Order", b =>

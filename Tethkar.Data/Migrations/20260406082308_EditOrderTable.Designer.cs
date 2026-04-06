@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tethkar.Data.Data;
 
@@ -11,9 +12,11 @@ using Tethkar.Data.Data;
 namespace Tethkar.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260406082308_EditOrderTable")]
+    partial class EditOrderTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -314,6 +317,29 @@ namespace Tethkar.Data.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("Tethkar.Data.Models.EventCategory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("EventId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("EventCategories");
+                });
+
             modelBuilder.Entity("Tethkar.Data.Models.Order", b =>
                 {
                     b.Property<long>("Id")
@@ -356,7 +382,7 @@ namespace Tethkar.Data.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<long>("TicketId")
+                    b.Property<long>("TicketTypeId")
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("UnitPrice")
@@ -366,7 +392,7 @@ namespace Tethkar.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("TicketId");
+                    b.HasIndex("TicketTypeId");
 
                     b.ToTable("OrderItems");
                 });
@@ -596,6 +622,25 @@ namespace Tethkar.Data.Migrations
                     b.Navigation("Organizer");
                 });
 
+            modelBuilder.Entity("Tethkar.Data.Models.EventCategory", b =>
+                {
+                    b.HasOne("Tethkar.Data.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Tethkar.Data.Models.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("Tethkar.Data.Models.Order", b =>
                 {
                     b.HasOne("Tethkar.Data.Models.ApplicationUser", "Buyer")
@@ -615,15 +660,15 @@ namespace Tethkar.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Tethkar.Data.Models.Ticket", "Ticket")
+                    b.HasOne("Tethkar.Data.Models.TicketType", "TicketType")
                         .WithMany()
-                        .HasForeignKey("TicketId")
+                        .HasForeignKey("TicketTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");
 
-                    b.Navigation("Ticket");
+                    b.Navigation("TicketType");
                 });
 
             modelBuilder.Entity("Tethkar.Data.Models.Payment", b =>

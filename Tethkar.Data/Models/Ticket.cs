@@ -1,15 +1,20 @@
-﻿namespace Tethkar.Data.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Tethkar.Data.Enums;
+
+namespace Tethkar.Data.Models
 {
     public class Ticket
     {
         public long Id { get; set; }
-        public long OrderItemId { get; set; }
-        public long TicketTypeId { get; set; }
-        public string BuyerUserId { get; set; } = string.Empty;
         public DateTime PurchasedAt { get; set; }
-        public string Status { get; set; } = string.Empty;
-        public OrderItem OrderItem { get; set; } = null!;
-        public TicketType TicketType { get; set; } = null!;
-        public ApplicationUser Buyer { get; set; } = null!;
+        public TicketStatusEnum Status { get; set; }
+
+        public long TicketTypeId { get; set; }
+        [ForeignKey(nameof(TicketTypeId))]
+        public TicketType? TicketType { get; set; }
+
+        public string BuyerUserId { get; set; } = string.Empty;
+        [ForeignKey(nameof(BuyerUserId))]
+        public ApplicationUser? Buyer { get; set; }
     }
 }

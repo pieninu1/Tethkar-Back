@@ -1,17 +1,17 @@
-﻿namespace Tethkar.Data.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Tethkar.Data.Models;
+public class OrderItem
 {
-    public class OrderItem
-    {
-        public long Id { get; set; }
-        public int Quantity { get; set; }
-        public decimal UnitPrice { get; set; }
+    public long Id { get; set; }
+    public int Quantity { get; set; }
+    public decimal UnitPrice { get; set; }
 
-        // Relationships
-         public long OrderId { get; set; }
-         public long TicketTypeId { get; set; }
-         public Order Order { get; set; } = null!;
-         public TicketType TicketType { get; set; } = null!;
+     public long OrderId { get; set; }
+    [ForeignKey(nameof(OrderId))]
+    public Order? Order { get; set; }
 
-         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
-    }
+    public long TicketId { get; set; }
+    [ForeignKey(nameof(TicketId))]
+    public Ticket? Ticket { get; set; }
 }

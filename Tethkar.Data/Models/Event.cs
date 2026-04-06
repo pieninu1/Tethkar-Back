@@ -1,4 +1,6 @@
-﻿namespace Tethkar.Data.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Tethkar.Data.Models
 {
     public class Event
     {
@@ -9,13 +11,17 @@
         public DateTime CreatedAt { get; set; }
         public string Venue { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+
         public long CityId { get; set; }
+        [ForeignKey(nameof(CityId))]
+        public City? City { get; set; }
+
         public string OrganizerId { get; set; } = string.Empty;
+        [ForeignKey(nameof(OrganizerId))]
+        public ApplicationUser? Organizer { get; set; }
 
-        public City City { get; set; } = null!;
-        public ApplicationUser Organizer { get; set; } = null!;
-
-        public ICollection<EventCategory> EventCategories { get; set; } = new List<EventCategory>();
-        public ICollection<TicketType> TicketTypes { get; set; } = new List<TicketType>();
+        public long CategoryId { get; set; }
+        [ForeignKey(nameof(CategoryId))]
+        public Category? Category { get; set; }
     }
 }

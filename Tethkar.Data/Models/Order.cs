@@ -1,16 +1,18 @@
-﻿namespace Tethkar.Data.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Tethkar.Data.Enums;
+
+namespace Tethkar.Data.Models
 {
     public class Order
     {
         public long Id { get; set; }
-
         public decimal TotalAmount { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string Status { get; set; } = string.Empty;
+        public OrderStatusEnum Status { get; set; }
 
-        // Relationships (add later)
         public string BuyerUserId { get; set; } = string.Empty;
-        public ApplicationUser Buyer { get; set; } = null!;
+        [ForeignKey(nameof(BuyerUserId))]
+        public ApplicationUser? Buyer { get; set; }
 
          public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
          public ICollection<Payment> Payments { get; set; } = new List<Payment>();
