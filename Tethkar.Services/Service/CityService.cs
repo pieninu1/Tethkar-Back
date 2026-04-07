@@ -11,39 +11,50 @@ public class CityService(AppDbContext context) : ICityService
 
     public async Task<IEnumerable<City>> GetAllAsync()
     {
-        return await _context.Cities.AsNoTracking().ToListAsync();
+        return await _context.Cities
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task<City?> GetByIdAsync(long id)
     {
-        return await _context.Cities.FindAsync(id);
+        return await _context.Cities
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<City> CreateAsync(City city)
     {
         await _context.Cities.AddAsync(city);
         await _context.SaveChangesAsync();
+
         return city;
     }
 
     public async Task<City?> UpdateAsync(long id, City city)
     {
-        var existingCity = await _context.Cities.FindAsync(id);
+        var existingCity = await _context.Cities
+            .FirstOrDefaultAsync(c => c.Id == id);
+
         if (existingCity is null) return null;
 
         existingCity.Name = city.Name;
 
         await _context.SaveChangesAsync();
+
         return existingCity;
     }
 
     public async Task<City?> DeleteAsync(long id)
     {
-        var city = await _context.Cities.FindAsync(id);
+        var city = await _context.Cities
+            .FirstOrDefaultAsync(c => c.Id == id);
+
         if (city is null) return null;
 
         _context.Cities.Remove(city);
         await _context.SaveChangesAsync();
+
         return city;
     }
 }

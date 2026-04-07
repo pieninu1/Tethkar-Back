@@ -1,7 +1,5 @@
 ﻿using Tethkar.Data.Models;
-
 namespace Tethkar.Services.IService;
-
 public interface ICityService
 {
     Task<IEnumerable<City>> GetAllAsync();
