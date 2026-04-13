@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Tethkar.Data.Models;
 using Tethkar.Services.IService;
 
@@ -6,10 +7,12 @@ namespace Tethkar.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CityController(ICityService cityService) : ControllerBase
     {
         private readonly ICityService _cityService = cityService;
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -17,6 +20,7 @@ namespace Tethkar.API.Controllers
             return Ok(cities);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id:long}")]
         public async Task<IActionResult> GetById(long id)
         {
@@ -28,6 +32,7 @@ namespace Tethkar.API.Controllers
             return Ok(city);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] City city)
         {
@@ -39,6 +44,7 @@ namespace Tethkar.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdCity.Id }, createdCity);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:long}")]
         public async Task<IActionResult> Update(long id, [FromBody] City city)
         {
@@ -53,6 +59,7 @@ namespace Tethkar.API.Controllers
             return Ok(updatedCity);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> Delete(long id)
         {

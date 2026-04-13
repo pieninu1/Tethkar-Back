@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Tethkar.Data.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Tethkar.Data.DTOs;
 using Tethkar.Services.IService;
 
 namespace Tethkar.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TicketTypeController(ITicketTypeService ticketTypeService) : ControllerBase
+    [Authorize]
+    public class TicketTypesController(ITicketTypeService ticketTypeService) : ControllerBase
     {
         private readonly ITicketTypeService _ticketTypeService = ticketTypeService;
 
@@ -35,13 +37,14 @@ namespace Tethkar.API.Controllers
             return Ok(ticketTypes);
         }
 
+        [Authorize(Roles = "Admin,Organizer")]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TicketType ticketType)
+        public async Task<IActionResult> Create([FromBody] CreateTicketTypeDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var createdTicketType = await _ticketTypeService.CreateAsync(ticketType);
+            var createdTicketType = await _ticketTypeService.CreateAsync(dto);
 
             if (createdTicketType is null)
                 return BadRequest("Event does not exist.");
@@ -49,17 +52,19 @@ namespace Tethkar.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdTicketType.Id }, createdTicketType);
         }
 
+        [Authorize(Roles = "Admin,Organizer")]
         [HttpPut("{id:long}")]
-        public async Task<IActionResult> Update(long id, [FromBody] TicketType ticketType)
+        public async Task<IActionResult> Update(long id, [FromBody] UpdateTicketTypeDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var existingTicketType = await _ticketTypeService.GetByIdAsync(id);
+
             if (existingTicketType is null)
                 return NotFound("Ticket type not found.");
 
-            var updatedTicketType = await _ticketTypeService.UpdateAsync(id, ticketType);
+            var updatedTicketType = await _ticketTypeService.UpdateAsync(id, dto);
 
             if (updatedTicketType is null)
                 return BadRequest("Update failed.");
@@ -67,6 +72,7 @@ namespace Tethkar.API.Controllers
             return Ok(updatedTicketType);
         }
 
+        [Authorize(Roles = "Admin,Organizer")]
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> Delete(long id)
         {

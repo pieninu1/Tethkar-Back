@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Tethkar.Data.Models;
 using Tethkar.Services.IService;
 
@@ -8,6 +7,7 @@ namespace Tethkar.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EventController(IEventService eventService) : ControllerBase
     {
         private readonly IEventService _eventService = eventService;
@@ -62,6 +62,7 @@ namespace Tethkar.API.Controllers
                 return BadRequest(ModelState);
 
             var existingEvent = await _eventService.GetByIdAsync(id);
+
             if (existingEvent is null)
                 return NotFound("Event not found.");
 

@@ -7,10 +7,12 @@ namespace Tethkar.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoriesController(ICategoryService categoryService) : ControllerBase
     {
         private readonly ICategoryService _categoryService = categoryService;
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -18,6 +20,7 @@ namespace Tethkar.API.Controllers
             return Ok(categories);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id:long}")]
         public async Task<IActionResult> GetById(long id)
         {

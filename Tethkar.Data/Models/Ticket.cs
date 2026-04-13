@@ -7,6 +7,7 @@ namespace Tethkar.Data.Models
     {
         public long Id { get; set; }
         public DateTime PurchasedAt { get; set; }
+        public DateTime EventDate { get; set; }
         public TicketStatusEnum Status { get; set; }
 
         public long TicketTypeId { get; set; }

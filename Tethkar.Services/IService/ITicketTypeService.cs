@@ -1,4 +1,5 @@
-﻿using Tethkar.Data.Models;
+﻿using Tethkar.Data.DTOs;
+using Tethkar.Data.Models;
 
 namespace Tethkar.Services.IService
 {
@@ -7,8 +8,8 @@ namespace Tethkar.Services.IService
         Task<IEnumerable<TicketType>> GetAllAsync();
         Task<TicketType?> GetByIdAsync(long id);
         Task<IEnumerable<TicketType>> GetByEventIdAsync(long eventId);
-        Task<TicketType?> CreateAsync(TicketType ticketType);
-        Task<TicketType?> UpdateAsync(long id, TicketType ticketType);
+        Task<TicketType?> CreateAsync(CreateTicketTypeDto dto);
+        Task<TicketType?> UpdateAsync(long id, UpdateTicketTypeDto dto);
         Task<TicketType?> DeleteAsync(long id);
     }
 }

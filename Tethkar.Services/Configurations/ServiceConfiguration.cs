@@ -13,7 +13,8 @@ public static class ServiceConfiguration
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<ICityService, CityService>();
         services.AddScoped<IEventService, EventService>();
-        //services.AddScoped<ITicketTypeService, TicketTypeService>();
+        services.AddScoped<ITicketService, TicketService>();
+        services.AddScoped<ITicketTypeService, TicketTypeService>();
         //services.AddScoped<IOrderService, OrderService>();
         //services.AddScoped<IPaymentMethodService, PaymentMethodService>();
         //services.AddScoped<IPaymentService, PaymentService>();
