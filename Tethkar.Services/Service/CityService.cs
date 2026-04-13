@@ -39,6 +39,7 @@ public class CityService(AppDbContext context) : ICityService
         if (existingCity is null) return null;
 
         existingCity.Name = city.Name;
+        existingCity.ImageUrl = city.ImageUrl;
 
         await _context.SaveChangesAsync();
 

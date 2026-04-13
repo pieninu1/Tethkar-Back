@@ -6,13 +6,14 @@ using Tethkar.Services.IService;
 namespace Tethkar.API.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController, AllowAnonymous] // All endpoints allowed without token
+    [ApiController]
     public class AuthController(IAuthService authService) : ControllerBase
     {
         private readonly IAuthService _authService = authService;
 
         #region Register
 
+        [AllowAnonymous]
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
@@ -34,6 +35,7 @@ namespace Tethkar.API.Controllers
 
         #region Login
 
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> GetTokenAsync([FromBody] TokenRequestModel model)
         {
@@ -55,6 +57,7 @@ namespace Tethkar.API.Controllers
 
         #region Refresh Token
 
+        [Authorize]
         [HttpGet("RefreshToken")]
         public async Task<IActionResult> RefreshToken()
         {
@@ -78,6 +81,7 @@ namespace Tethkar.API.Controllers
 
         #region Revoke Token
 
+        [Authorize]
         [HttpPost("RevokeToken")]
         public async Task<IActionResult> RevokeToken([FromBody] RevokeToken model)
         {
@@ -96,8 +100,9 @@ namespace Tethkar.API.Controllers
 
         #endregion
 
-        #region Add Role
+        #region Add Role (ADMIN ONLY)
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("AddRole")]
         public async Task<IActionResult> AddRoleAsync([FromBody] AddRoleModel model)
         {

@@ -39,6 +39,7 @@ public class CategoryService(AppDbContext context) : ICategoryService
         if (existingCategory is null) return null;
 
         existingCategory.Name = category.Name;
+        existingCategory.ImageUrl = category.ImageUrl;
 
         await _context.SaveChangesAsync();
 

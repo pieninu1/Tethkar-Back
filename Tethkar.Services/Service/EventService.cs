@@ -14,7 +14,8 @@ public class EventService(AppDbContext context) : IEventService
         return await _context.Events
             .Include(e => e.City)
             .Include(e => e.Category)
-            .Include(e => e.Organizer)
+            //  temp for check
+            //.Include(e => e.Organizer)
             .AsNoTracking()
             .ToListAsync();
     }
@@ -45,6 +46,9 @@ public class EventService(AppDbContext context) : IEventService
             .AnyAsync(c => c.Id == eventt.CategoryId);
 
         if (!categoryExists) return null;
+
+        if (eventt.CreatedAt == default)
+            eventt.CreatedAt = DateTime.UtcNow;
 
         await _context.Events.AddAsync(eventt);
         await _context.SaveChangesAsync();
@@ -79,6 +83,11 @@ public class EventService(AppDbContext context) : IEventService
         existingEvent.EndDateTime = eventt.EndDateTime;
         existingEvent.Venue = eventt.Venue;
         existingEvent.Description = eventt.Description;
+
+        existingEvent.CardImageUrl = eventt.CardImageUrl;
+        existingEvent.DetailsImageUrl1 = eventt.DetailsImageUrl1;
+        existingEvent.DetailsImageUrl2 = eventt.DetailsImageUrl2;
+
         existingEvent.CityId = eventt.CityId;
         existingEvent.OrganizerId = eventt.OrganizerId;
         existingEvent.CategoryId = eventt.CategoryId;

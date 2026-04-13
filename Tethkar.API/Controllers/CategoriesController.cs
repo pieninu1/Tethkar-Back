@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Tethkar.Data.Models;
 using Tethkar.Services.IService;
 
@@ -6,7 +7,7 @@ namespace Tethkar.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController(ICategoryService categoryService) : ControllerBase
+    public class CategoriesController(ICategoryService categoryService) : ControllerBase
     {
         private readonly ICategoryService _categoryService = categoryService;
 
@@ -28,6 +29,7 @@ namespace Tethkar.API.Controllers
             return Ok(category);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Category category)
         {
@@ -39,6 +41,7 @@ namespace Tethkar.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdCategory.Id }, createdCategory);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:long}")]
         public async Task<IActionResult> Update(long id, [FromBody] Category category)
         {
@@ -53,6 +56,7 @@ namespace Tethkar.API.Controllers
             return Ok(updatedCategory);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> Delete(long id)
         {

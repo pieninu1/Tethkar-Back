@@ -11,6 +11,9 @@ namespace Tethkar.Data.Models
         public DateTime CreatedAt { get; set; }
         public string Venue { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public string CardImageUrl { get; set; } = string.Empty;
+        public string DetailsImageUrl1 { get; set; } = string.Empty;
+        public string DetailsImageUrl2 { get; set; } = string.Empty;
 
         public long CityId { get; set; }
         [ForeignKey(nameof(CityId))]

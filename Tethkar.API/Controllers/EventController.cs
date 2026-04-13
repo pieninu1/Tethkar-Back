@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Tethkar.Data.Models;
 using Tethkar.Services.IService;
 
@@ -10,6 +12,7 @@ namespace Tethkar.API.Controllers
     {
         private readonly IEventService _eventService = eventService;
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -17,6 +20,7 @@ namespace Tethkar.API.Controllers
             return Ok(events);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id:long}")]
         public async Task<IActionResult> GetById(long id)
         {
@@ -28,11 +32,19 @@ namespace Tethkar.API.Controllers
             return Ok(eventt);
         }
 
+        [Authorize(Roles = "Organizer,Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Event eventt)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            var organizerId = User.FindFirst("uid")?.Value;
+
+            if (string.IsNullOrEmpty(organizerId))
+                return Unauthorized("Organizer id not found in token.");
+
+            eventt.OrganizerId = organizerId;
 
             var createdEvent = await _eventService.CreateAsync(eventt);
 
@@ -42,6 +54,7 @@ namespace Tethkar.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdEvent.Id }, createdEvent);
         }
 
+        [Authorize(Roles = "Organizer,Admin")]
         [HttpPut("{id:long}")]
         public async Task<IActionResult> Update(long id, [FromBody] Event eventt)
         {
@@ -52,6 +65,13 @@ namespace Tethkar.API.Controllers
             if (existingEvent is null)
                 return NotFound("Event not found.");
 
+            var organizerId = User.FindFirst("uid")?.Value;
+
+            if (string.IsNullOrEmpty(organizerId))
+                return Unauthorized("Organizer id not found in token.");
+
+            eventt.OrganizerId = organizerId;
+
             var updatedEvent = await _eventService.UpdateAsync(id, eventt);
 
             if (updatedEvent is null)
@@ -60,6 +80,7 @@ namespace Tethkar.API.Controllers
             return Ok(updatedEvent);
         }
 
+        [Authorize(Roles = "Organizer,Admin")]
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> Delete(long id)
         {

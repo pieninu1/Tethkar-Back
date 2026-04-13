@@ -202,8 +202,9 @@ namespace Tethkar.Services.Service
             var roles = await _userManager.GetRolesAsync(user);
             var roleClaims = new List<Claim>();
 
+            // ✅ FIX HERE
             foreach (var role in roles)
-                roleClaims.Add(new Claim("roles", role));
+                roleClaims.Add(new Claim(ClaimTypes.Role, role));
 
             var claims = new[]
             {
