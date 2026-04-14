@@ -15,6 +15,8 @@ public static class ServiceConfiguration
         services.AddScoped<IEventService, EventService>();
         services.AddScoped<ITicketService, TicketService>();
         services.AddScoped<ITicketTypeService, TicketTypeService>();
+        services.AddScoped<IUserFavoriteService, UserFavoriteService>();
+        services.AddScoped<IHeroBannerService, HeroBannerService>();
         //services.AddScoped<IOrderService, OrderService>();
         //services.AddScoped<IPaymentMethodService, PaymentMethodService>();
         //services.AddScoped<IPaymentService, PaymentService>();

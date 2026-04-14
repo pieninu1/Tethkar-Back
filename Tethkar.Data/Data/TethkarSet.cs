@@ -14,4 +14,8 @@ public partial class AppDbContext
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<PaymentMethod> PaymentMethods { get; set; }
+
+    public DbSet<UserFavorite> UserFavorites { get; set; }
+
+    public DbSet<HeroBanner> HeroBanners { get; set; }
 }
