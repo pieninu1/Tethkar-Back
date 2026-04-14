@@ -9,5 +9,6 @@ namespace Tethkar.Services.IService
         Task<string> AddRoleAsync(AddRoleModel model);
         Task<AuthModel> RefreshTokenAsync(string token);
         Task<bool> RevokeTokenAsync(string token);
+        Task<UserProfileDto?> GetProfileAsync(string userId);
     }
 }

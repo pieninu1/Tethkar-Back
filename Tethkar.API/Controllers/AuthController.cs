@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Tethkar.Data.DTOs;
 using Tethkar.Services.IService;
 
@@ -51,6 +52,28 @@ namespace Tethkar.API.Controllers
                 SetRefreshTokenInCookie(result.RefreshToken, result.RefreshTokenExpiration);
 
             return Ok(result);
+        }
+
+        #endregion
+
+        #region Get Profile
+
+        [Authorize]
+        [HttpGet("Profile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            var userId = User.FindFirst("uid")?.Value
+                         ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("User ID not found in token.");
+
+            var profile = await _authService.GetProfileAsync(userId);
+
+            if (profile == null)
+                return NotFound("User profile not found.");
+
+            return Ok(profile);
         }
 
         #endregion

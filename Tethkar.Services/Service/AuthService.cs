@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Tethkar.Data.DTOs;
+using Tethkar.Data.Enums;
 using Tethkar.Data.Models;
 using Tethkar.Services.IService;
 
@@ -41,7 +42,8 @@ namespace Tethkar.Services.Service
                 UserName = model.Username,
                 Email = model.Email,
                 FirstName = model.FirstName,
-                LastName = model.LastName
+                LastName = model.LastName,
+                CreatedAt = DateTime.UtcNow
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -196,13 +198,37 @@ namespace Tethkar.Services.Service
             return true;
         }
 
+        public async Task<UserProfileDto?> GetProfileAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                return null;
+
+            return new UserProfileDto
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email ?? string.Empty,
+                PhoneNumber = user.PhoneNumber,
+                Gender = user.Gender switch
+                {
+                    GenderEnum.Male => "ذكر",
+                    GenderEnum.Female => "أنثى",
+                    _ => null
+                },
+                Nationality = user.Nationality,
+                Residence = user.Residence,
+                CreatedAt = user.CreatedAt
+            };
+        }
+
         private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
             var roleClaims = new List<Claim>();
 
-            // ✅ FIX HERE
             foreach (var role in roles)
                 roleClaims.Add(new Claim(ClaimTypes.Role, role));
 
@@ -211,7 +237,8 @@ namespace Tethkar.Services.Service
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-                new Claim("uid", user.Id)
+                new Claim("uid", user.Id),
+                new Claim(ClaimTypes.NameIdentifier, user.Id)
             }
             .Union(userClaims)
             .Union(roleClaims);
